@@ -3,43 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZENN ANIME - Sub Indo</title>
-    <!-- Tailwind CSS via CDN untuk styling cepat & responsif -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Kaizenime - Streaming Anime 3D</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f1016; color: #fff; overflow-x: hidden; }
+        
+        /* Header & Search */
+        header { padding: 20px; background: rgba(18, 19, 26, 0.9); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid #222; }
+        .logo-area { display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 24px; color: #ff3366; text-shadow: 0 0 10px rgba(255,51,102,0.5); }
+        .search-box { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #333; background: #1a1b26; color: #fff; font-size: 16px; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #ff3366; box-shadow: 0 0 8px rgba(255,51,102,0.4); }
+
+        /* 3D Hero Effect Section */
+        .hero-3d { height: 180px; margin: 15px; border-radius: 20px; background: linear-gradient(135deg, #1f1c2c, #928dab); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transform-style: preserve-3d; perspective: 1000px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-content { text-align: center; transform: translateZ(30px); }
+        .hero-content h2 { font-size: 22px; margin-bottom: 5px; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .hero-content p { font-size: 13px; color: #ddd; }
+
+        /* Anime List Grid */
+        .container { padding: 15px; }
+        .section-title { font-size: 18px; margin-bottom: 12px; border-left: 4px solid #ff3366; padding-left: 8px; }
+        .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .anime-card { background: #1a1b26; border-radius: 12px; overflow: hidden; border: 1px solid #252636; cursor: pointer; transition: 0.3s; }
+        .anime-card:active { transform: scale(0.95); }
+        .anime-poster { height: 200px; width: 100%; object-fit: cover; }
+        .anime-info { padding: 10px; }
+        .anime-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .anime-meta { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; }
+
+        /* Detail / Player Modal */
+        #player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f1016; display: none; flex-direction: column; z-index: 200; overflow-y: auto; }
+        .player-header { padding: 15px; display: flex; align-items: center; background: #12131a; border-bottom: 1px solid #222; }
+        .back-btn { background: none; border: none; color: #ff3366; font-size: 18px; cursor: pointer; margin-right: 15px; font-weight: bold; }
+        .video-container { width: 100%; background: #000; aspect-ratio: 16/9; position: relative; }
+        .video-container iframe, .video-container video { width: 100%; height: 100%; border: none; }
+        .player-body { padding: 15px; }
+        .resolutions { display: flex; gap: 10px; margin: 10px 0; }
+        .res-btn { padding: 6px 12px; background: #222332; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 12px; cursor: pointer; }
+        .res-btn.active { background: #ff3366; border-color: #ff3366; }
+        .episode-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+        .ep-btn { padding: 8px 14px; background: #1a1b26; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; }
+        .ep-btn.active { background: #ff3366; border-color: #ff3366; }
+    </style>
 </head>
-<body class="bg-slate-950 text-white font-sans min-h-screen pb-10">
-    
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
-        <h1 class="text-lg font-bold tracking-wider text-red-500">⚡ ZENN <span class="text-white">ANIME</span></h1>
-        <input type="text" id="search-input" placeholder="Cari anime..." class="bg-slate-800 text-sm px-3 py-1.5 rounded-lg border border-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500 w-1/2 sm:w-1/3">
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>KAIZENIME</h1>
+            <span style="font-size: 12px; color: #00ffcc;">Sub Indo HD</span>
+        </div>
+        <input type="text" id="search" class="search-box" placeholder="Cari anime favoritmu..." oninput="searchAnime()">
     </header>
 
-    <main class="p-4 max-w-3xl mx-auto">
-        
-        <!-- Video Player Section (Hidden secara default) -->
-        <div id="player-container" class="hidden mb-6 bg-slate-900 p-3 rounded-2xl border border-slate-800 shadow-xl">
-            <div class="flex justify-between items-center mb-2 px-1">
-                <h2 id="anime-title" class="font-bold text-sm sm:text-base text-slate-200 truncate">Judul Anime</h2>
-                <button onclick="closePlayer()" class="text-xs bg-red-600 px-3 py-1 rounded-lg font-medium hover:bg-red-700 transition">Tutup ✕</button>
+    <!-- Efek 3D Card Interactive di Home -->
+    <div class="hero-3d" id="hero3d">
+        <div class="hero-content">
+            <h2>🔥 Trending Musim Ini</h2>
+            <p>Streaming Anime Lengkap & Update Setiap Hari</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-title">Daftar Anime Lengkap</div>
+        <div class="anime-grid" id="animeGrid">
+            <!-- Data Anime akan dimuat otomatis oleh JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal Player & Episode -->
+    <div id="player-modal">
+        <div class="player-header">
+            <button class="back-btn" onclick="closePlayer()">✕ Kembali</button>
+            <h3 id="modal-title" style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Judul Anime</h3>
+        </div>
+        <div class="video-container">
+            <iframe id="animeVideo" src="" allowfullscreen></iframe>
+        </div>
+        <div class="player-body">
+            <h4 style="font-size: 14px; margin-bottom: 5px;">Pilihan Resolusi HD:</h4>
+            <div class="resolutions">
+                <button class="res-btn active" onclick="changeRes('360p')">360p</button>
+                <button class="res-btn" onclick="changeRes('480p')">480p</button>
+                <button class="res-btn" onclick="changeRes('720p')">720p (HD)</button>
+                <button class="res-btn" onclick="changeRes('1080p')">1080p (FHD)</button>
             </div>
-            <div class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-inner">
-                <video id="video-player" controls crossorigin="anonymous" class="w-full h-full object-contain">
-                    <source id="video-source" src="" type="video/mp4">
-                    <!-- Tempat Subtitle Indo (.vtt) -->
-                    <track id="sub-source" src="" kind="subtitles" srclang="id" label="Indonesia" default>
-                    Browser kamu tidak mendukung video player.
-                </video>
+            <h4 style="font-size: 14px; margin: 15px 0 5px 0;">Pilih Episode (Sub Indo):</h4>
+            <div class="episode-list" id="episodeList">
+                <!-- Daftar Episode -->
             </div>
         </div>
+    </div>
 
-        <!-- Katalog Anime Grid -->
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">🔥 Daftar Anime Terbaru (Sub Indo)</h3>
-        <div id="anime-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <!-- Item akan digenerate otomatis lewat JS -->
-        </div>
-    </main>
+    <script>
+        // Data Dummy Anime Lengkap dengan Episode & Sub Indo
+        const animeData = [
+            {
+                id: 1,
+                title: "Solo Leveling Season 2",
+                genre: "Action, Fantasy",
+                score: "9.3",
+                poster: "https://image.tmdb.org/t/p/w500/geCRueV3ElhRTr0xtJuPWJt6sMJ.jpg",
+                episodes: [
+                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 3, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Jujutsu Kingdom III",
+                genre: "Action, Supernatural",
+                score: "9.0",
+                poster: "https://image.tmdb.org/t/p/w500/hUzeosckckYfc5IHUnfdbkQpGCZ.jpg",
+                episodes: [
+                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Demon Slayer: Infinity Castle",
+                genre: "Action, Shounen",
+                score: "9.5",
+                poster: "https://image.tmdb.org/t/p/w500/xUfRZu2mi8bH6SzQj1RtjbuBuEC.jpg",
+                episodes: [
+                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 3, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 4, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
+            {
+                id: 4,
+                title: "One Piece",
+                genre: "Adventure, Action",
+                score: "9.1",
+                poster: "https://image.tmdb.org/t/p/w500/cMD9Ygz11zjJzAovURpO75Qg7rT.jpg",
+                episodes: [
+                    { ep: 1090, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { ep: 1091, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            }
+        ];
 
-    <script src="app.js"></script>
+        let currentAnime = null;
+
+        function renderAnime(data) {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = "";
+            data.forEach(anime => {
+                grid.innerHTML += `
+                    <div class="anime-card" onclick="openPlayer(${anime.id})">
+                        <img src="${anime.poster}" class="anime-poster" alt="${anime.title}">
+                        <div class="anime-info">
+                            <div class="anime-title">${anime.title}</div>
+                            <div class="anime-meta">
+                                <span>⭐ ${anime.score}</span>
+                                <span>Sub Indo</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function searchAnime() {
+            const keyword = document.getElementById('search').value.toLowerCase();
+            const filtered = animeData.filter(a => a.title.toLowerCase().includes(keyword));
+            renderAnime(filtered);
+        }
+
+        function openPlayer(id) {
+            currentAnime = animeData.find(a => a.id === id);
+            document.getElementById('modal-title').innerText = currentAnime.title;
+            document.getElementById('player-modal').style.display = 'flex';
+            
+            // Load episode pertama secara default
+            loadEpisode(0);
+        }
+
+        function loadEpisode(index) {
+            const ep = currentAnime.episodes[index];
+            document.getElementById('animeVideo').src = ep.url;
+            
+            // Render tombol episode
+            const epList = document.getElementById('episodeList');
+            epList.innerHTML = "";
+            currentAnime.episodes.forEach((item, idx) => {
+                epList.innerHTML += `<button class="ep-btn ${idx === index ? 'active' : ''}" onclick="loadEpisode(${idx})">Ep ${item.ep}</button>`;
+            });
+        }
+
+        function closePlayer() {
+            document.getElementById('player-modal').style.display = 'none';
+            document.getElementById('animeVideo').src = "";
+        }
+
+        function changeRes(res) {
+            document.querySelectorAll('.res-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            // Simulasi ubah kualitas resolusi video
+        }
+
+        // Efek Interaktif 3D Tilt pada Hero Banner
+        const hero = document.getElementById('hero3d');
+        hero.addEventListener('touchmove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            const xc = rect.width / 2;
+            const yc = rect.height / 2;
+            const dx = (x - xc) / 10;
+            const dy = (y - yc) / 10;
+            hero.style.transform = `rotateX(${-dy}deg) rotateY(${dx}deg)`;
+        });
+
+        hero.addEventListener('touchend', () => {
+            hero.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        });
+
+        // Inisialisasi awal
+        renderAnime(animeData);
+    </script>
 </body>
 </html>
