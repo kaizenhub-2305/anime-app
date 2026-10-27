@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AnimeIndo</string>
+    <string name="title_activity_main">AnimeIndo</string>
+    <string name="package_name">com.zenn.animeapp</string>
+    <string name="custom_url_scheme">com.zenn.animeapp</string>
+</resources>
