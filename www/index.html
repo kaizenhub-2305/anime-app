@@ -3,48 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kaizenime - Streaming Anime 3D</title>
+    <title>Kaizenime - Live API Streaming</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f1016; color: #fff; overflow-x: hidden; }
+        body { background-color: #0b0c10; color: #fff; overflow-x: hidden; }
         
-        /* Header & Search */
-        header { padding: 20px; background: rgba(18, 19, 26, 0.9); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid #222; }
+        header { padding: 15px 20px; background: rgba(11, 12, 16, 0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid #1f2833; display: flex; flex-direction: column; gap: 12px; }
         .logo-area { display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 24px; color: #ff3366; text-shadow: 0 0 10px rgba(255,51,102,0.5); }
-        .search-box { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #333; background: #1a1b26; color: #fff; font-size: 16px; outline: none; transition: 0.3s; }
-        .search-box:focus { border-color: #ff3366; box-shadow: 0 0 8px rgba(255,51,102,0.4); }
+        h1 { font-size: 22px; color: #66fcf1; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 10px rgba(102,252,241,0.4); }
+        .badge-hd { background: #45a29e; color: #0b0c10; padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; }
+        .search-box { width: 100%; padding: 12px 18px; border-radius: 20px; border: 1px solid #1f2833; background: #1f2833; color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #66fcf1; box-shadow: 0 0 8px rgba(102,252,241,0.3); }
 
-        /* 3D Hero Effect Section */
-        .hero-3d { height: 180px; margin: 15px; border-radius: 20px; background: linear-gradient(135deg, #1f1c2c, #928dab); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transform-style: preserve-3d; perspective: 1000px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .hero-content { text-align: center; transform: translateZ(30px); }
-        .hero-content h2 { font-size: 22px; margin-bottom: 5px; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .hero-content p { font-size: 13px; color: #ddd; }
+        .hero-3d { height: 140px; margin: 15px; border-radius: 16px; background: linear-gradient(135deg, #1f2833, #0b0c10); border: 1px solid #45a29e; display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); }
+        .hero-3d h2 { font-size: 16px; color: #66fcf1; margin-bottom: 4px; }
+        .hero-3d p { font-size: 11px; color: #c5c6c7; }
 
-        /* Anime List Grid */
-        .container { padding: 15px; }
-        .section-title { font-size: 18px; margin-bottom: 12px; border-left: 4px solid #ff3366; padding-left: 8px; }
-        .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .anime-card { background: #1a1b26; border-radius: 12px; overflow: hidden; border: 1px solid #252636; cursor: pointer; transition: 0.3s; }
-        .anime-card:active { transform: scale(0.95); }
-        .anime-poster { height: 200px; width: 100%; object-fit: cover; }
-        .anime-info { padding: 10px; }
-        .anime-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .anime-meta { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; }
+        .container { padding: 0 15px 20px 15px; }
+        .section-title { font-size: 16px; margin-bottom: 12px; color: #c5c6c7; font-weight: bold; border-left: 3px solid #66fcf1; padding-left: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .total-count { font-size: 12px; color: #45a29e; font-weight: normal; }
+        
+        .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .anime-card { background: #1f2833; border-radius: 10px; overflow: hidden; border: 1px solid #2c3542; cursor: pointer; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .anime-card:active { transform: scale(0.96); }
+        .poster-wrapper { width: 100%; height: 210px; position: relative; background: #000; }
+        .anime-poster { width: 100%; height: 100%; object-fit: cover; }
+        .score-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); color: #66fcf1; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .anime-info { padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+        .anime-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .anime-genre { font-size: 10px; color: #c5c6c7; }
 
-        /* Detail / Player Modal */
-        #player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f1016; display: none; flex-direction: column; z-index: 200; overflow-y: auto; }
-        .player-header { padding: 15px; display: flex; align-items: center; background: #12131a; border-bottom: 1px solid #222; }
-        .back-btn { background: none; border: none; color: #ff3366; font-size: 18px; cursor: pointer; margin-right: 15px; font-weight: bold; }
+        .loading-text { text-align: center; grid-column: span 2; padding: 30px; color: #66fcf1; font-size: 14px; }
+
+        #player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; display: none; flex-direction: column; z-index: 200; overflow-y: auto; }
+        .player-header { padding: 12px 15px; display: flex; align-items: center; background: #1f2833; border-bottom: 1px solid #2c3542; }
+        .back-btn { background: none; border: none; color: #66fcf1; font-size: 14px; cursor: pointer; font-weight: bold; margin-right: 15px; }
         .video-container { width: 100%; background: #000; aspect-ratio: 16/9; position: relative; }
-        .video-container iframe, .video-container video { width: 100%; height: 100%; border: none; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
         .player-body { padding: 15px; }
-        .resolutions { display: flex; gap: 10px; margin: 10px 0; }
-        .res-btn { padding: 6px 12px; background: #222332; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 12px; cursor: pointer; }
-        .res-btn.active { background: #ff3366; border-color: #ff3366; }
-        .episode-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
-        .ep-btn { padding: 8px 14px; background: #1a1b26; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; }
-        .ep-btn.active { background: #ff3366; border-color: #ff3366; }
+        .player-title { font-size: 16px; font-weight: bold; color: #66fcf1; margin-bottom: 10px; }
+        
+        .section-label { font-size: 12px; color: #c5c6c7; margin: 12px 0 6px 0; font-weight: bold; }
+        .resolutions { display: flex; gap: 8px; }
+        .res-btn { padding: 6px 12px; background: #1f2833; border: 1px solid #45a29e; color: #fff; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .res-btn.active { background: #66fcf1; color: #0b0c10; }
+
+        .episode-list { display: flex; gap: 6px; flex-wrap: wrap; max-height: 200px; overflow-y: auto; padding-right: 5px; }
+        .ep-btn { padding: 8px 12px; background: #1f2833; border: 1px solid #2c3542; color: #fff; border-radius: 6px; font-size: 11px; cursor: pointer; min-width: 45px; text-align: center; }
+        .ep-btn.active { background: #66fcf1; color: #0b0c10; border-color: #66fcf1; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -52,148 +58,148 @@
     <header>
         <div class="logo-area">
             <h1>KAIZENIME</h1>
-            <span style="font-size: 12px; color: #00ffcc;">Sub Indo HD</span>
+            <span class="badge-hd">LIVE API HD</span>
         </div>
-        <input type="text" id="search" class="search-box" placeholder="Cari anime favoritmu..." oninput="searchAnime()">
+        <input type="text" id="search" class="search-box" placeholder="Cari ribuan anime di dunia (cth: Naruto, Bleach)..." oninput="debounceSearch()">
     </header>
 
-    <!-- Efek 3D Card Interactive di Home -->
-    <div class="hero-3d" id="hero3d">
-        <div class="hero-content">
-            <h2>🔥 Trending Musim Ini</h2>
-            <p>Streaming Anime Lengkap & Update Setiap Hari</p>
+    <div class="hero-3d">
+        <div>
+            <h2>🌐 Terhubung ke Database Global</h2>
+            <p>Cari anime apa saja secara instan dari seluruh dunia!</p>
         </div>
     </div>
 
     <div class="container">
-        <div class="section-title">Daftar Anime Lengkap</div>
+        <div class="section-title">
+            <span>Hasil Pencarian / Trending</span>
+            <span class="total-count" id="totalCount">Memuat...</span>
+        </div>
         <div class="anime-grid" id="animeGrid">
-            <!-- Data Anime akan dimuat otomatis oleh JavaScript -->
+            <div class="loading-text">Menghubungkan ke Live API...</div>
         </div>
     </div>
 
-    <!-- Modal Player & Episode -->
     <div id="player-modal">
         <div class="player-header">
-            <button class="back-btn" onclick="closePlayer()">✕ Kembali</button>
-            <h3 id="modal-title" style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Judul Anime</h3>
+            <button class="back-btn" onclick="closePlayer()">← Kembali</button>
+            <h3 id="modal-title" style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Judul Anime</h3>
         </div>
         <div class="video-container">
             <iframe id="animeVideo" src="" allowfullscreen></iframe>
         </div>
         <div class="player-body">
-            <h4 style="font-size: 14px; margin-bottom: 5px;">Pilihan Resolusi HD:</h4>
+            <div class="player-title" id="playerAnimeTitle">Judul Anime</div>
+            
+            <div class="section-label">PILIHAN RESOLUSI HD:</div>
             <div class="resolutions">
-                <button class="res-btn active" onclick="changeRes('360p')">360p</button>
-                <button class="res-btn" onclick="changeRes('480p')">480p</button>
-                <button class="res-btn" onclick="changeRes('720p')">720p (HD)</button>
-                <button class="res-btn" onclick="changeRes('1080p')">1080p (FHD)</button>
+                <button class="res-btn active" onclick="setRes('360p')">360p</button>
+                <button class="res-btn" onclick="setRes('480p')">480p</button>
+                <button class="res-btn" onclick="setRes('720p')">720p HD</button>
+                <button class="res-btn" onclick="setRes('1080p')">1080p FHD</button>
             </div>
-            <h4 style="font-size: 14px; margin: 15px 0 5px 0;">Pilih Episode (Sub Indo):</h4>
-            <div class="episode-list" id="episodeList">
-                <!-- Daftar Episode -->
-            </div>
+
+            <div class="section-label" id="epSectionLabel">PILIH EPISODE:</div>
+            <div class="episode-list" id="episodeList"></div>
         </div>
     </div>
 
     <script>
-        // Data Dummy Anime Lengkap dengan Episode & Sub Indo
-        const animeData = [
-            {
-                id: 1,
-                title: "Solo Leveling Season 2",
-                genre: "Action, Fantasy",
-                score: "9.3",
-                poster: "https://image.tmdb.org/t/p/w500/geCRueV3ElhRTr0xtJuPWJt6sMJ.jpg",
-                episodes: [
-                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 3, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-                ]
-            },
-            {
-                id: 2,
-                title: "Jujutsu Kingdom III",
-                genre: "Action, Supernatural",
-                score: "9.0",
-                poster: "https://image.tmdb.org/t/p/w500/hUzeosckckYfc5IHUnfdbkQpGCZ.jpg",
-                episodes: [
-                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-                ]
-            },
-            {
-                id: 3,
-                title: "Demon Slayer: Infinity Castle",
-                genre: "Action, Shounen",
-                score: "9.5",
-                poster: "https://image.tmdb.org/t/p/w500/xUfRZu2mi8bH6SzQj1RtjbuBuEC.jpg",
-                episodes: [
-                    { ep: 1, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 2, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 3, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 4, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-                ]
-            },
-            {
-                id: 4,
-                title: "One Piece",
-                genre: "Adventure, Action",
-                score: "9.1",
-                poster: "https://image.tmdb.org/t/p/w500/cMD9Ygz11zjJzAovURpO75Qg7rT.jpg",
-                episodes: [
-                    { ep: 1090, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: 1091, url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-                ]
+        const API_BASE = 'https://api.jikan.moe/v4';
+        let searchTimeout = null;
+
+        // Ambil data anime populer saat aplikasi pertama kali dibuka
+        async function fetchTopAnime() {
+            try {
+                const res = await fetch(`${API_BASE}/top/anime?limit=20`);
+                const data = await res.json();
+                renderAnime(data.data);
+            } catch (error) {
+                document.getElementById('animeGrid').innerHTML = `<div class="loading-text">Gagal memuat data. Periksa koneksi internet!</div>`;
             }
-        ];
+        }
 
-        let currentAnime = null;
+        // Fungsi pencarian dinamis ke Live API dengan Debounce
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            const keyword = document.getElementById('search').value.trim();
+            
+            if (keyword.length === 0) {
+                fetchTopAnime();
+                return;
+            }
 
-        function renderAnime(data) {
+            document.getElementById('animeGrid').innerHTML = `<div class="loading-text">Mencari anime...</div>`;
+            
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/anime?q=${encodeURIComponent(keyword)}&limit=20`);
+                    const data = await res.json();
+                    if (data.data && data.data.length > 0) {
+                        renderAnime(data.data);
+                    } else {
+                        document.getElementById('animeGrid').innerHTML = `<div class="loading-text">Anime tidak ditemukan!</div>`;
+                        document.getElementById('totalCount').innerText = `0 Ditemukan`;
+                    }
+                } catch (error) {
+                    document.getElementById('animeGrid').innerHTML = `<div class="loading-text">Terjadi kesalahan saat mencari.</div>`;
+                }
+            }, 500);
+        }
+
+        function renderAnime(animeList) {
             const grid = document.getElementById('animeGrid');
+            document.getElementById('totalCount').innerText = `${animeList.length} Anime`;
             grid.innerHTML = "";
-            data.forEach(anime => {
+            
+            animeList.forEach(anime => {
+                const title = anime.title;
+                const poster = anime.images.jpg.image_url;
+                const score = anime.score || 'N/A';
+                const genres = anime.genres.map(g => g.name).join(', ') || 'Action';
+                const episodes = anime.episodes || 12;
+                
+                // Bungkus data aman ke dalam atribut onclick
+                const animeDataObj = encodeURIComponent(JSON.stringify({
+                    title: title,
+                    episodes: episodes
+                }));
+
                 grid.innerHTML += `
-                    <div class="anime-card" onclick="openPlayer(${anime.id})">
-                        <img src="${anime.poster}" class="anime-poster" alt="${anime.title}">
+                    <div class="anime-card" onclick='openPlayer(decodeURIComponent("${animeDataObj}"))'>
+                        <div class="poster-wrapper">
+                            <span class="score-badge">⭐ ${score}</span>
+                            <img src="${poster}" class="anime-poster" alt="${title}" loading="lazy">
+                        </div>
                         <div class="anime-info">
-                            <div class="anime-title">${anime.title}</div>
-                            <div class="anime-meta">
-                                <span>⭐ ${anime.score}</span>
-                                <span>Sub Indo</span>
-                            </div>
+                            <div class="anime-title">${title}</div>
+                            <div class="anime-genre">${genres}</div>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function searchAnime() {
-            const keyword = document.getElementById('search').value.toLowerCase();
-            const filtered = animeData.filter(a => a.title.toLowerCase().includes(keyword));
-            renderAnime(filtered);
-        }
-
-        function openPlayer(id) {
-            currentAnime = animeData.find(a => a.id === id);
-            document.getElementById('modal-title').innerText = currentAnime.title;
+        function openPlayer(animeStr) {
+            const anime = JSON.parse(animeStr);
+            document.getElementById('modal-title').innerText = anime.title;
+            document.getElementById('playerAnimeTitle').innerText = anime.title;
+            document.getElementById('epSectionLabel').innerText = `PILIH EPISODE (Total: ${anime.episodes} Episode):`;
             document.getElementById('player-modal').style.display = 'flex';
-            
-            // Load episode pertama secara default
-            loadEpisode(0);
+            loadEpisode(1);
         }
 
-        function loadEpisode(index) {
-            const ep = currentAnime.episodes[index];
-            document.getElementById('animeVideo').src = ep.url;
+        function loadEpisode(epNum) {
+            document.getElementById('animeVideo').src = "https://www.youtube.com/embed/ScMzIvxBSi4";
             
-            // Render tombol episode
             const epList = document.getElementById('episodeList');
             epList.innerHTML = "";
-            currentAnime.episodes.forEach((item, idx) => {
-                epList.innerHTML += `<button class="ep-btn ${idx === index ? 'active' : ''}" onclick="loadEpisode(${idx})">Ep ${item.ep}</button>`;
-            });
+            
+            // Batasi tombol episode maksimal 50 tombol agar UI tetap ringan & mulus dipencet
+            const total = 50; 
+            for (let i = 1; i <= total; i++) {
+                epList.innerHTML += `<button class="ep-btn ${i === epNum ? 'active' : ''}" onclick="loadEpisode(${i})">Ep ${i}</button>`;
+            }
         }
 
         function closePlayer() {
@@ -201,31 +207,13 @@
             document.getElementById('animeVideo').src = "";
         }
 
-        function changeRes(res) {
+        function setRes(res) {
             document.querySelectorAll('.res-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            // Simulasi ubah kualitas resolusi video
         }
 
-        // Efek Interaktif 3D Tilt pada Hero Banner
-        const hero = document.getElementById('hero3d');
-        hero.addEventListener('touchmove', (e) => {
-            const rect = hero.getBoundingClientRect();
-            const x = e.touches[0].clientX - rect.left;
-            const y = e.touches[0].clientY - rect.top;
-            const xc = rect.width / 2;
-            const yc = rect.height / 2;
-            const dx = (x - xc) / 10;
-            const dy = (y - yc) / 10;
-            hero.style.transform = `rotateX(${-dy}deg) rotateY(${dx}deg)`;
-        });
-
-        hero.addEventListener('touchend', () => {
-            hero.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        });
-
-        // Inisialisasi awal
-        renderAnime(animeData);
+        // Jalankan saat pertama kali load
+        fetchTopAnime();
     </script>
 </body>
 </html>
